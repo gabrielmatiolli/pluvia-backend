@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Pluvia.Domain.Tests/Pluvia.Domain.Tests.csproj" />
+  <Project Path="Pluvia.Domain/Pluvia.Domain.csproj" />
+  <Project Path="Pluvia.Http/Pluvia.Http.csproj" />
+  <Project Path="Pluvia.Repository/Pluvia.Repository.csproj" />
+  <Project Path="Pluvia.WebApi.Tests/Pluvia.WebApi.Tests.csproj" />
+  <Project Path="Pluvia.WebApi/Pluvia.WebApi.csproj" />
+</Solution>

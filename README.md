@@ -1,0 +1,151 @@
+# Pluvia API
+
+API para monitoramento de focos de incendio, previsao de risco e irrigacao automatizada.
+
+## Arquitetura
+
+Projeto organizado em camadas:
+
+- `Pluvia.WebApi`: apenas endpoints/controle e mapeamento de HTTP.
+- `Pluvia.Domain`: entidades e use cases (regras de negocio, inputs/outputs).
+- `Pluvia.Repository`: acesso a dados (EF Core).
+- `Pluvia.Http`: integracoes externas (OpenWeather).
+
+## Requisitos
+
+- .NET SDK 10
+- MySQL
+- Conta na OpenWeather (para obter a API key)
+
+## Configuracao
+
+Crie um arquivo `.env` na raiz do projeto com:
+
+```
+ConnectionStrings__DefaultConnection=Server=localhost;Port=3306;Database=pluvia;User=root;Password=senha;
+JWT__Key=chave-com-no-minimo-32-caracteres
+JWT__Issuer=pluvia-api
+JWT__Audience=pluvia-client
+JWT__ExpiresInMinutes=60
+OPENWEATHER__APIKEY=sua-chave
+OPENWEATHER__BASEURL=https://api.openweathermap.org
+```
+
+Para desenvolvimento local, use um banco MySQL vazio (o schema sera criado via migrations). Para testes de integracao, o projeto usa SQLite in-memory automaticamente.
+
+## Como rodar
+
+1) Restaurar dependencias
+
+```
+dotnet restore
+```
+
+2) Aplicar migrations
+
+```
+dotnet ef database update --project Pluvia.Repository --startup-project Pluvia.WebApi
+```
+
+3) Iniciar a API
+
+```
+dotnet run --project Pluvia.WebApi
+```
+
+4) Acessar o Swagger (Documentacao API)
+
+Com a API em execucao, abra:
+
+```
+http://localhost:5081/swagger/index.html
+```
+
+Obs.: a porta pode variar conforme o `launchSettings.json`.
+
+## Testes
+
+### Executar via CLI
+
+```
+dotnet test
+```
+
+Para executar apenas os testes de integracao:
+
+```
+dotnet test Pluvia.WebApi.Tests\Pluvia.WebApi.Tests.csproj -v minimal
+```
+
+Os testes de integracao usam SQLite in-memory e autenticacao fake via `TestAuthHandler`.
+
+### Executar via Visual Studio
+
+Abra **Teste** > **Explorador de Testes** e clique em **Executar todos**.
+
+## Endpoints
+
+### Auth
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+### User
+
+- `GET /api/users/me`
+- `PUT /api/users/me`
+
+### Crops
+
+- `GET /api/crops`
+
+### Lands
+
+- `GET /api/lands`
+- `GET /api/lands/{id}`
+- `POST /api/lands`
+- `PUT /api/lands/{id}`
+- `DELETE /api/lands/{id}`
+- `GET /api/lands/{id}/forecast`
+
+## Postman
+
+Colecao atualizada em `C:\Users\gabri\Downloads\pluvia.postman_collection.json`:
+
+- Variaveis: `{{baseUrl}}`, `{{token}}`, `{{landId}}`
+- Script no login para setar `token`
+- Script no criar land para setar `landId`
+- Auth bearer no nivel da collection
+
+## Comportamento do endpoint /api/lands
+
+O endpoint `GET /api/lands` faz automaticamente, para cada terreno do usuario autenticado:
+
+1) Atualizacao de dados climaticos:
+consulta a OpenWeather por latitude/longitude do terreno.
+
+2) Atualizacao de forecast:
+calcula o risco de incendio com base em temperatura, umidade e pressao.
+Se os valores mudaram em relacao ao ultimo registro, cria um novo item em `forecast_histories`.
+
+3) Atualizacao de irrigacao:
+define o estado do irrigador com base no risco calculado.
+- risco > 80%: ativado
+- risco <= 80%: desativado
+Se o estado mudou em relacao ao ultimo historico, cria um novo item em `irrigation_histories`.
+
+4) Simulacao da automacao do irrigador:
+a automacao do irrigador também pode ser simulada no Wokwi: https://wokwi.com/projects/465189225880013825
+![Simulacao da automacao do irrigador no Wokwi](imagem.png)
+o ESP32 consulta o endpoint e identifica o registro em irrigation_histories mais recente e, conforme o status retornado, ativa ou desativa o irrigador simulado, representado por um LED e por mensagens exibidas em tempo real no display.
+
+## Seguranca
+
+- Senha com minimo de 6 caracteres.
+- Senha armazenada com hash usando BCrypt.
+- Confirmacao de senha na criacao e atualizacao.
+
+## Observacoes
+
+- Em ambiente `Testing`, o `Program.cs` aplica valores default para JWT/OpenWeather e nao carrega `.env`.
+- A rota padronizada de usuario atual e `/api/users/me`.
