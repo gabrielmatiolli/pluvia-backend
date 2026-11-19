@@ -87,6 +87,23 @@ public sealed class UserController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(IReadOnlyList<SaasUserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSaasUsersAsync(
+        [FromServices] IListSaasUsersUseCase useCase,
+        CancellationToken ct)
+    {
+        var output = await useCase.ExecuteAsync(ct);
+        var response = output
+            .Select(user => new SaasUserResponse(user.Name, user.LandCount))
+            .ToList();
+
+        return Ok(response);
+    }
+
     private static bool TryGetUserId(ClaimsPrincipal principal, out ulong userId)
     {
         var userIdClaim = principal.FindFirstValue(JwtRegisteredClaimNames.Sub)

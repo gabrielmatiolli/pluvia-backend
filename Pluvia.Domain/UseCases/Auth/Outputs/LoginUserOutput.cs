@@ -7,4 +7,5 @@ public sealed record LoginUserOutput(
 public sealed record LoggedUserOutput(
     ulong Id,
     string Name,
-    string Email);
+    string Email,
+    string Role);

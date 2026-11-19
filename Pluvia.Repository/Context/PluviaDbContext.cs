@@ -23,6 +23,7 @@ namespace Pluvia.Repository.Context
                 builder.Property(x => x.Name).HasColumnName("name").HasMaxLength(150).IsRequired();
                 builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
                 builder.Property(x => x.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
+                builder.Property(x => x.Role).HasColumnName("role").HasMaxLength(20).HasDefaultValue(UserRoles.User).IsRequired();
                 builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
                 builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
 

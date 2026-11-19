@@ -7,4 +7,5 @@ public sealed record RegisterUserOutput(
 public sealed record RegisteredUserOutput(
     ulong Id,
     string Name,
-    string Email);
+    string Email,
+    string Role);

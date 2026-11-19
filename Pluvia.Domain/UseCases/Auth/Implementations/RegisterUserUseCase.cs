@@ -40,6 +40,7 @@ public sealed class RegisterUserUseCase(IUserRepository userRepository) : IRegis
             Name = input.Name.Trim(),
             Email = normalizedEmail,
             Password = BCrypt.Net.BCrypt.HashPassword(input.Password),
+            Role = UserRoles.User,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -48,6 +49,6 @@ public sealed class RegisterUserUseCase(IUserRepository userRepository) : IRegis
 
         return new RegisterUserOutput(
             Message: "Usuario criado com sucesso",
-            User: new RegisteredUserOutput(user.Id, user.Name, user.Email));
+            User: new RegisteredUserOutput(user.Id, user.Name, user.Email, user.Role));
     }
 }

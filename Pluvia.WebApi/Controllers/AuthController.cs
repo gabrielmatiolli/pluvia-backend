@@ -32,7 +32,8 @@ public sealed class AuthController : ControllerBase
                 {
                     id = output.User.Id,
                     name = output.User.Name,
-                    email = output.User.Email
+                    email = output.User.Email,
+                    role = output.User.Role
                 }
             });
         }
@@ -66,7 +67,8 @@ public sealed class AuthController : ControllerBase
                 {
                     id = output.User.Id,
                     name = output.User.Name,
-                    email = output.User.Email
+                    email = output.User.Email,
+                    role = output.User.Role
                 }
             });
         }

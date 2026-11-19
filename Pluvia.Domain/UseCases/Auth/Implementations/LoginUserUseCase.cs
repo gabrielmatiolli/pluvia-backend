@@ -32,7 +32,7 @@ public sealed class LoginUserUseCase(
 
         return new LoginUserOutput(
             Token: token,
-            User: new LoggedUserOutput(user.Id, user.Name, user.Email));
+            User: new LoggedUserOutput(user.Id, user.Name, user.Email, user.Role));
     }
 
     private static string GenerateToken(Pluvia.Domain.Entities.User user, AuthTokenSettings settings)
@@ -45,6 +45,7 @@ public sealed class LoginUserUseCase(
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
             new(JwtRegisteredClaimNames.Name, user.Name),
+            new(ClaimTypes.Role, user.Role),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

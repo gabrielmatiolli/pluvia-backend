@@ -153,6 +153,7 @@ builder.Services.AddScoped<ILoginUserUseCase>(sp =>
 
 builder.Services.AddScoped<IGetCurrentUserUseCase, GetCurrentUserUseCase>();
 builder.Services.AddScoped<IUpdateCurrentUserUseCase, UpdateCurrentUserUseCase>();
+builder.Services.AddScoped<IListSaasUsersUseCase, ListSaasUsersUseCase>();
 builder.Services.AddScoped<IListCropsUseCase, ListCropsUseCase>();
 builder.Services.AddScoped<IApplyIrrigationRiskUseCase, ApplyIrrigationRiskUseCase>();
 builder.Services.AddScoped<ICaptureCurrentForecastUseCase, CaptureCurrentForecastUseCase>();
@@ -169,7 +170,7 @@ builder.Services.AddScoped<IGetLandForecastUseCase, GetLandForecastUseCase>();
 builder.Services.AddEndpointsApiExplorer(); // Permite que as Minimal APIs sejam descobertas
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "Pluvia API", Version = "v1", Description = "API de monitoramento de focos de incêndio." });
+    c.SwaggerDoc("v1", new() { Title = "Pluvia API", Version = "v1", Description = "API de monitoramento de focos de incendio, previsao e administracao de clientes SaaS." });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

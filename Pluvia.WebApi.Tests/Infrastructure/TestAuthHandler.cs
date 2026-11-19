@@ -13,11 +13,13 @@ public sealed class TestAuthHandler(
 {
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        var role = Request.Headers["X-Test-Role"].FirstOrDefault() ?? "User";
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, "1"),
             new(ClaimTypes.Name, "Joao"),
-            new(ClaimTypes.Email, "joao@email.com")
+            new(ClaimTypes.Email, "joao@email.com"),
+            new(ClaimTypes.Role, role)
         };
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);

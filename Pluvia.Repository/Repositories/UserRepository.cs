@@ -26,6 +26,16 @@ public sealed class UserRepository(PluviaDbContext dbContext) : IUserRepository
             .AnyAsync(user => user.Email == normalizedEmail, ct);
     }
 
+    public async Task<IReadOnlyList<UserLandCount>> ListUsersWithLandCountAsync(CancellationToken ct)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .Where(user => user.Role == UserRoles.User)
+            .OrderBy(user => user.Name)
+            .Select(user => new UserLandCount(user.Name, user.Lands.Count))
+            .ToListAsync(ct);
+    }
+
     public async Task AddAsync(User user, CancellationToken ct)
     {
         dbContext.Users.Add(user);

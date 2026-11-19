@@ -56,6 +56,7 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
                     Name = "Joao",
                     Email = "joao@email.com",
                     Password = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    Role = UserRoles.User,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 });

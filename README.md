@@ -94,6 +94,7 @@ Abra **Teste** > **Explorador de Testes** e clique em **Executar todos**.
 
 - `GET /api/users/me`
 - `PUT /api/users/me`
+- `GET /api/users` (somente `Admin`)
 
 ### Crops
 
@@ -149,3 +150,24 @@ o ESP32 consulta o endpoint e identifica o registro em irrigation_histories mais
 
 - Em ambiente `Testing`, o `Program.cs` aplica valores default para JWT/OpenWeather e nao carrega `.env`.
 - A rota padronizada de usuario atual e `/api/users/me`.
+
+## Perfis de acesso
+
+A API possui dois perfis:
+
+- `User`: cliente comum, com acesso aos próprios dados e terrenos.
+- `Admin`: proprietário do SaaS, com acesso à visão administrativa dos clientes.
+
+A migration `AddRolesAndSeedAdmin` cria o administrador inicial:
+
+- E-mail: `admin@pluvia.local`
+- Senha: `Admin@123`
+
+Troque essa senha assim que acessar um ambiente real e utilize uma credencial exclusiva por ambiente.
+
+O endpoint administrativo exige um JWT com role `Admin`:
+
+- `GET /api/users`: retorna somente o nome de cada cliente comum e a quantidade de terrenos cadastrados.
+
+
+
