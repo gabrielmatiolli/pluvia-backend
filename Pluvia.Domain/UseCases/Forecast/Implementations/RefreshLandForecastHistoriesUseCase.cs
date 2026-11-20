@@ -11,7 +11,16 @@ public sealed class RefreshLandForecastHistoriesUseCase(
     {
         foreach (var land in input.Lands)
         {
-            await captureUseCase.CaptureCurrentForecastAsync(land, ct);
+            try
+            {
+                await captureUseCase.CaptureCurrentForecastAsync(land, ct);
+            }
+            catch (Exception) when (ct.IsCancellationRequested is false)
+            {
+                // A previsao do tempo e um dado complementar: se o provedor externo
+                // falhar (chave invalida, indisponibilidade, etc.), a listagem de
+                // terrenos nao deve quebrar.
+            }
         }
 
         return new RefreshLandForecastHistoriesOutput();
